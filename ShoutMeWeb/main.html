@@ -18,12 +18,17 @@
                 <div ng-app="myApp" ng-controller="myCtrl">
                     <textarea id="message_field" row="20" ng-model="message" ng-hide="hideMessage" placeholder="Enter Shout Message..."></textarea>
                     <input id="submit_button" type="button" value="Create Shout Message" ng-hide="hideSubmit" ng-click="test_post()">
+                    <input id="help_button" type="button" value="Need help?" ng-hide="hideHelp" ng-click="get_help()">
                     
                     <div id="ball1" class="ball" ng-hide="hideBall" ng-show="showBall"></div>
                     <div id="ball2" class="ball" ng-hide="hideBall" ng-show="showBall"></div>
                     <div id="ball3" class="ball" ng-hide="hideBall" ng-show="showBall"></div>
+                    <h3 id="resultID" ng-model="shoutID" ng-hide="hideID">{{shoutID}}</h3>
+                    <p id="alexaExample" ng-model="alexaExample" ng-hide="hideAlexaExample">{{alexaExample}}</p>
                     
+                    <input id="refresh" type="button" value="Return" ng-hide="hideRefresh" onClick=location=URL>
                 </div>
+                <p id="footer">Copyright © 2017 nikostudios. All rights reserved.</p>
             </div>
             
         </div>
@@ -33,12 +38,31 @@
 
 <script>
         var app = angular.module("myApp", [])
-        app.controller("myCtrl", function($scope, $http){
+        app.controller("myCtrl", function($scope, $http, $interval){
             $scope.hideBall = true;
+            $scope.hideID = true;
+            $scope.hideRefresh = true;
+            var result = {};
+            
+            $scope.get_help = function(){
+                alert("This is an application that allows the user to make Amazon's Alexa Echo read any message.\n You can also share the message's unique I.D. with anyone. This requires a working and activated Alexa device that also has the ShoutMe skill enabled for it. If the Alexa skill is enabled.\n Go ahead and try\n\n \"Alexa, ask shout me open 0\" \n\nto get a welcome message from ShoutMe.\n\nType a message in the text area and click create shout.\nThen go ahead and try out your new ShoutMe message.");
+            }
+            
+            $scope.refresh = function($state){
+                 $state.reload();
+            }
+            
             $scope.test_post = function(){
-                
-                $http.get("https://msghub.000webhostapp.com/test.php").then(function(response){
-                    var result = response.data;
+                if($scope.message.length >5){
+                $http({
+                    url: "https://msghub.000webhostapp.com/addShoutWebService.php",
+                    method: "POST",
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    data:{
+                        'message' : $scope.message
+                    }
+                    }).then(function(response){
+                    result = response.data;
                     $scope.message = result;
                 });
                 
@@ -47,7 +71,19 @@
                 $scope.showBall = true;
                 $scope.hideMessage = true;
                 $scope.hideSubmit = true;
-                
+                $scope.hideHelp = true;
+                $interval(function(){
+                    $scope.hideBall = true;
+                    $scope.showBall = false;
+                    $scope.hideID = false;
+                    $scope.hideRefresh = false;
+                    $scope.shoutID = "Shout ID : \n" + result;
+                    $scope.alexaExample = "Try:\n\"Alexa, ask shout me open " + result + ".\""
+                }, 4700);
+                }
+                else{
+                    alert("Your shout message is too short!");
+                }
         };
     });
                         
@@ -103,7 +139,7 @@
         opacity: 0.5;
         border: 0;
         color: white;
-        font-family: "OpenSans";
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
         font-size: 20;
         padding: 10px;
         transition: 0.1s;
@@ -128,7 +164,7 @@
         font-size: 25;
         border: none;
         background: none;
-        font-family: "OpenSans";
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
         color: #1b2631;
         opacity: 1;
         transition: 0.5s;
@@ -141,6 +177,39 @@
         transition: 0.5s;
     }
     
+    #help_button{
+        width: 100%;
+        height: 4%;
+        margin: -50%;
+        margin-top: 14%;
+        left:50%;
+        position: absolute;
+        font-size: 15;
+        border: none;
+        background: none;
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+        color: #1b2631;
+        opacity: 0.7;
+        transition: 0.5s;
+    }
+    #help_button:hover{
+        opacity: 0.2;
+        transition: 0.5s;
+    }
+    #help_button:focus{
+        outline: none;
+    }
+    
+    #resultID{
+        width: 100%;
+        height: 14%;
+        top: 20%;
+        text-align: center;
+        position: absolute;
+        color:white;
+        opacity: 0.5;
+    }
+    
     
     #intro{
         width: 100%;
@@ -150,6 +219,50 @@
         text-align: center;
         position: absolute;
         opacity: 0.5;
+    }
+    
+    #alexaExample{
+        width: 100%;
+        height: 14%;
+        margin-top: 20%;
+        top:20%;
+        text-align: center;
+        position: absolute;
+        opacity: 0.5;
+        font-size: 27;
+    }
+    
+    #refresh{
+        width: 100%;
+        height: 10%;
+        margin: -50%;
+        margin-top: 40%;
+        left:50%;
+        position: absolute;
+        font-size: 25;
+        border: none;
+        background: none;
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+        color: #1b2631;
+        opacity: 1;
+        transition: 0.5s;
+    }
+    #refresh:hover{
+        opacity: 0.4;
+        transition: 0.5s;
+    }
+    #refresh:focus{
+        outline: none;
+    }
+    
+    #footer{
+        width: 100%;
+        height: 14%;
+        bottom:-10%;
+        text-align: center;
+        position: absolute;
+        opacity: 0.5;
+        font-size: 12;
     }
     
     .ball{
@@ -168,59 +281,59 @@
     #ball1{
         left: 40%;
         animation-delay: 1s;
-        animation-duration: 1s;
+        animation-duration: 2.5s;
         animation-name: anim1;
         animation-iteration-count: infinite;
-        animation-direction: alternate;
+        animation-direction: normal;
     }
     #ball2{
         left: 50%;
         animation-delay: 1.5s;
-        animation-duration: 1s;
+        animation-duration: 2.5s;
         animation-name: anim2;
         animation-iteration-count: infinite;
-        animation-direction: alternate;
+        animation-direction: normal;
     }
     #ball3{
         left: 60%;
         animation-delay: 2s;
-        animation-duration: 1s;
+        animation-duration: 2.5s;
         animation-name: anim3;
         animation-iteration-count: infinite;
-        animation-direction: alternate;
+        animation-direction: normal;
     }
     
     @keyframes anim1{
-        from{
+        0%{
             top: 50%;
             background-color: aqua; 
             box-shadow: 0px 1px 3px 1px #1b2631;
         }
-        to{
+        20%{
             top: 40%;
             background-color: #2c3e50; 
             box-shadow: 0px 4px 3px 1px #1b2631;
         }
     }
     @keyframes anim2{
-        from{
+        0%{
             top: 50%;
             background-color: crimson; 
             box-shadow: 0px 1px 3px 1px #1b2631;
         }
-        to{
+        20%{
             top: 40%;
             background-color: #2c3e50;
             box-shadow: 0px 4px 3px 1px #1b2631;
         }
     }
     @keyframes anim3{
-        from{
+        0%{
             top: 50%;
             background-color: gold; 
             box-shadow: 0px 1px 3px 1px #1b2631;
         }
-        to{
+        20%{
             top: 40%;
             background-color: #2c3e50; 
             box-shadow: 0px 4px 3px 1px #1b2631;
@@ -238,7 +351,7 @@
     }
     
     /**********************Mobile Styling*************************/
-    @media (max-width: 804px){
+    @media (max-width: 804px) and (min-width:501px){
         #intro{
             display: none;
         }
@@ -252,4 +365,145 @@
             color: black;
         }
     }
+    
+    @media(max-width: 500px) and (min-width: 100px){
+        #intro{
+            display: none;
+        }
+        
+        #title{
+            width: 100%;
+            height: 14%;
+            margin-top: -13%;
+            top: 8%;
+            text-align: center;
+            position: absolute;
+        }
+        
+        h3{
+        font-size: 35;
+        color: #1b2631;
+        opacity: 1;
+        }
+        
+        #userarea{
+            width: 90%;
+            height: 85%;
+            margin-left: -45%;
+            margin-top: 4%;
+            left:50%;
+            display:block;
+            padding-top: 10%;
+            position: absolute;
+            background-color: #34495e;
+            border-radius: 20px;
+            box-shadow: 0px 12px 15px 8px #1b2631;
+        }
+        
+        #submit_button{
+            width: 100%;
+            height: 10%;
+            margin: -50%;
+            margin-top: 8%;
+            left:50%;
+            top: 62%;
+            position: absolute;
+            font-size: 25;
+            border: none;
+            background: none;
+            font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+            color: #1b2631;
+            opacity: 1;
+            transition: 0.5s;
+            
+        }
+        
+        #help_button{
+            width: 100%;
+            height: 4%;
+            margin: -50%;
+            margin-top: 26%;
+            left:50%;
+            top: 62%;
+            position: absolute;
+            font-size: 15;
+            border: none;
+            background: none;
+            font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+            color: #1b2631;
+            opacity: 0.7;
+            transition: 0.5s;
+        }
+        
+        #refresh{
+        width: 100%;
+        height: 10%;
+        margin: -50%;
+        margin-top: 40%;
+        left:50%;
+        top:50%;
+        position: absolute;
+        font-size: 25;
+        border: none;
+        background: none;
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+        color: #1b2631;
+        opacity: 1;
+        transition: 0.5s;
+        }
+        
+        #alexaExample{
+        width: 100%;
+        height: 14%;
+        margin-top: 20%;
+        top:36%;
+        text-align: center;
+        position: absolute;
+        opacity: 0.5;
+        font-size: 20;
+    }
+        
+        #message_field{
+        width:100%;
+        height: 50%;
+        background-color: #1b2631;
+        opacity: 0.5;
+        border: 0;
+        color: white;
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+        font-size: 20;
+        padding: 10px;
+        transition: 0.1s;
+        margin-top: 15%;
+        resize: none;
+        }
+        
+         #ball1{
+        left: 30%;
+        animation-delay: 1s;
+        animation-duration: 2.5s;
+        animation-name: anim1;
+        animation-iteration-count: infinite;
+        animation-direction: normal;
+        }
+        #ball2{
+        left: 50%;
+        animation-delay: 1.5s;
+        animation-duration: 2.5s;
+        animation-name: anim2;
+        animation-iteration-count: infinite;
+        animation-direction: normal;
+        }
+        #ball3{
+        left: 70%;
+        animation-delay: 2s;
+        animation-duration: 2.5s;
+        animation-name: anim3;
+        animation-iteration-count: infinite;
+        animation-direction: normal;
+        }
+        
+    }
+    
+    
 </style>
