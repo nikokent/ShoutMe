@@ -25,7 +25,7 @@
                     <div id="ball3" class="ball" ng-hide="hideBall" ng-show="showBall"></div>
                     <h3 id="resultID" ng-model="shoutID" ng-hide="hideID">{{shoutID}}</h3>
                     <p id="alexaExample" ng-model="alexaExample" ng-hide="hideAlexaExample">{{alexaExample}}</p>
-                    
+                    <a id ="iOSShare" ng-href="{{iOSMessage}}" ng-hide="hideShare">iOS Share</a>
                     <input id="refresh" type="button" value="Return" ng-hide="hideRefresh" onClick=location=URL>
                 </div>
                 <p id="footer">Copyright © 2017 nikostudios. All rights reserved.</p>
@@ -41,6 +41,7 @@
         app.controller("myCtrl", function($scope, $http, $interval){
             $scope.hideBall = true;
             $scope.hideID = true;
+            $scope.hideShare = true;
             $scope.hideRefresh = true;
             var result = {};
             
@@ -73,11 +74,13 @@
                 $scope.hideSubmit = true;
                 $scope.hideHelp = true;
                 $interval(function(){
+                    $scope.hideShare = false;
                     $scope.hideBall = true;
                     $scope.showBall = false;
                     $scope.hideID = false;
                     $scope.hideRefresh = false;
                     $scope.shoutID = "Shout ID : \n" + result;
+                    $scope.iOSMessage = "sms:&body=Hey! I created a Shout Me message for you. Go to your Alexa and try \"Alexa, ask shout me open " + result + "\" to hear the message."
                     $scope.alexaExample = "Try:\n\"Alexa, ask shout me open " + result + ".\""
                 }, 4700);
                 }
@@ -230,6 +233,23 @@
         position: absolute;
         opacity: 0.5;
         font-size: 27;
+    }
+    
+    #iOSShare{
+        width: 100%;
+        height: 10%;
+        margin: -50%;
+        margin-top: 30%;
+        left:50%;
+        position: absolute;
+        font-size: 25;
+        border: none;
+        background: none;
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+        color: #1b2631;
+        opacity: 1;
+        transition: 0.5s;
+        display: none;
     }
     
     #refresh{
@@ -477,6 +497,27 @@
         margin-top: 15%;
         resize: none;
         }
+        
+        #iOSShare{
+        width: 100%;
+        height: 10%;
+        margin: -50%;
+        margin-top: 33%;
+        left:50%;
+        top:50%;
+        position: absolute;
+        font-size: 15;
+        border: none;
+        background: none;
+        font-family: 'Helvetica Rounded', 'Arial Rounded MT Bold','Montserrat', sans-serif;
+        color: #1b2631;
+        opacity: 1;
+        transition: 0.5s;
+        text-align: center;
+        display: none;
+        outline: none;
+    }
+        
         
          #ball1{
         left: 30%;
